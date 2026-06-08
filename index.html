@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام المعتمدين - لوحة التحكم</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ════════════════ CSS VARIABLES ════════════════ */
+        :root {
+            --bg: #0B1220;
+            --card: #131D31;
+            --border: #22304D;
+            --gold: #D4AF37;
+            --gold-light: #F0D060;
+            --gold-dark: #A88A20;
+            --white: #F5F7FA;
+            --blue: #3B82F6;
+            --blue-dark: #1E3A5F;
+            --green: #22C55E;
+            --red: #EF4444;
+            --muted: #7A8FAD;
+            --purple: #A855F7;
+            --sidebar-w: 220px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ════════════════ RESET & BASE ════════════════ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            background: var(--bg);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ════════════════ SCROLLBAR ════════════════ */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+            transition: background var(--transition);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--muted);
+        }
+
+        /* ════════════════ SIDEBAR ════════════════ */
+        .sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: var(--sidebar-w);
+            height: 100vh;
+            background: var(--card);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: transform var(--transition);
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            padding: 24px 20px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 0 16px rgba(212, 175, 55, 0.35);
+            flex-shrink: 0;
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlow {
+            0%, 100% { box-shadow: 0 0 16px rgba(212, 175, 55, 0.35); }
+            50% { box-shadow: 0 0 24px rgba(212, 175, 55, 0.5); }
+        }
+
+        .logo-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--gold);
+            line-height: 1.3;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 0;
+            overflow-y: auto;
+        }
+
+        .nav-section-label {
+            font-size: 10px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 20px 6px;
+            font-weight: 600;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 20px;
+            cursor: pointer;
+            transition: all var(--transition);
+            border-right: 3px solid transparent;
+            font-size: 14px;
+            color: var(--muted);
+            font-weight: 600;
+            user-select: none;
+        }
+
+        .nav-item:hover {
+            background: rgba(59, 130, 246, 0.08);
+            color: var(--white);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.12), transparent);
+            color: var(--gold);
+            border-right-color: var(--gold);
+        }
+
+        .nav-icon {
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            font-size: 11px;
+            color: var(--muted);
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        /* ════════════════ MAIN LAYOUT ════════════════ */
+        .main {
+            margin-right: var(--sidebar-w);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ════════════════ HEADER ════════════════ */
+        header {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 0 32px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+        }
+
+        .header-shield {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #1a2740, #0d1a2e);
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.2);
+            flex-shrink: 0;
+        }
+
+        .header-brand {
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+
+        .header-brand strong {
+            color: var(--gold);
+            font-size: 13px;
+            display: block;
+        }
+
+        .header-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+            letter-spacing: 1px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0%; }
+            100% { background-position: 200%; }
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--muted);
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .update-badge {
+            background: rgba(34, 192, 94, 0.12);
+            border: 1px solid rgba(34, 192, 94, 0.3);
+            color: var(--green);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all var(--transition);
+        }
+
+        .update-badge:hover {
+            background: rgba(34, 192, 94, 0.2);
+            border-color: rgba(34, 192, 94, 0.5);
+        }
+
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(0.8);
+            }
+        }
+
+        /* ════════════════ PAGE CONTENT ════════════════ */
+        .page {
+            padding: 28px 32px;
+            display: none;
+            animation: fadeIn 0.4s ease;
+            flex: 1;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--border), transparent);
+        }
+
+        /* ════════════════ STAT CARDS ════════════════ */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px 18px;
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+            transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60%;
+            height: 2px;
+            background: var(--accent, var(--blue));
+            border-radius: 2px;
+            opacity: 0.7;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+            border-color: var(--accent, var(--blue));
+        }
+
+        .stat-card[data-type="total"] { --accent: var(--gold); }
+        .stat-card[data-type="ca"] { --accent: var(--purple); }
+        .stat-card[data-type="cb"] { --accent: var(--blue); }
+        .stat-card[data-type="cd"] { --accent: var(--green); }
+        .stat-card[data-type="vio"] { --accent: var(--red); }
+
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            opacity: 0.8;
+        }
+
+        .stat-number {
+            font-size: 34px;
+            font-weight: 900;
+            color: var(--accent, var(--white));
+            line-height: 1;
+            margin-bottom: 4px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .stat-glow {
+            position: absolute;
+            bottom: -20px;
+            left: -20px;
+            width: 80px;
+            height: 80px;
+            background: var(--accent, var(--blue));
+            border-radius: 50%;
+            opacity: 0.05;
+            filter: blur(20px);
+        }
+
+        /* ════════════════ DASHBOARD ROW 2 ════════════════ */
+        .dash-row2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 22px;
+            transition: box-shadow var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 3px;
+            height: 14px;
+            background: var(--gold);
+            border-radius: 2px;
+        }
+
+        /* ════════════════ UPDATES LIST ════════════════ */
+        .update-list {
+            list-style: none;
+        }
+
+        .update-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 0;
+            border-bottom: 1px solid rgba(34, 48, 77, 0.6);
+            font-size: 13px;
+            color: var(--white);
+            transition: color var(--transition);
+        }
+
+        .update-item:last-child {
+            border-bottom: none;
+        }
+
+        .update-item:hover {
+            color: var(--gold);
+        }
+
+        .update-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--blue);
+            border-radius: 50%;
+            flex-shrink: 0;
+            box-shadow: 0 0 6px var(--blue);
+        }
+
+        .update-time {
+            margin-right: auto;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        /* ════════════════ RANK BARS ════════════════ */
+        .rank-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .rank-label {
+            width: 28px;
+            font-size: 12px;
+            font-weight: 800;
+            text-align: center;
+            color: var(--gold);
+        }
+
+        .rank-bar-bg {
+            flex: 1;
+            height: 10px;
+            background: rgba(34, 48, 77, 0.8);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .rank-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rank-bar-fill.ca {
+            background: linear-gradient(90deg, var(--purple), #7C3AED);
+        }
+
+        .rank-bar-fill.cb {
+            background: linear-gradient(90deg, var(--blue), #1D4ED8);
+        }
+
+        .rank-bar-fill.cd {
+            background: linear-gradient(90deg, var(--green), #16A34A);
+        }
+
+        .rank-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmerBar 2s infinite;
+        }
+
+        @keyframes shimmerBar {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .rank-count {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--white);
+            min-width: 24px;
+            text-align: left;
+        }
+
+        /* ════════════════ MEMBERS PAGE ════════════════ */
+        .filters-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-box,
+        .select-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 16px;
+            color: var(--white);
+            font-family: inherit;
+            font-size: 13px;
+            outline: none;
+            transition: border-color var(--transition), box-shadow var(--transition);
+            direction: rtl;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-box::placeholder {
+            color: var(--muted);
+        }
+
+        .search-box:focus,
+        .select-box:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+        }
+
+        .select-box {
+            cursor: pointer;
+        }
+
+        /* ════════════════ RANK FILTERS ════════════════ */
+        .rank-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+
+        .rank-badge {
+            padding: 8px 22px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all var(--transition);
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .rank-badge::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity var(--transition);
+            background: currentColor;
+            z-index: -1;
+        }
+
+        .rank-badge:hover::before {
+            opacity: 0.08;
+        }
+
+        .rank-badge.all {
+            background: rgba(245, 247, 250, 0.08);
+            color: var(--white);
+            border-color: var(--border);
+        }
+
+        .rank-badge.all.active {
+            background: rgba(245, 247, 250, 0.15);
+            border-color: var(--white);
+        }
+
+        .rank-badge.ca {
+            background: rgba(168, 85, 247, 0.12);
+            color: var(--purple);
+            border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        .rank-badge.ca.active {
+            background: rgba(168, 85, 247, 0.25);
+            border-color: var(--purple);
+            box-shadow: 0 0 14px rgba(168, 85, 247, 0.3);
+        }
+
+        .rank-badge.cb {
+            background: rgba(59, 130, 246, 0.12);
+            color: var(--blue);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .rank-badge.cb.active {
+            background: rgba(59, 130, 246, 0.25);
+            border-color: var(--blue);
+            box-shadow: 0 0 14px rgba(59, 130, 246, 0.3);
+        }
+
+        .rank-badge.cd {
+            background: rgba(34, 197, 94, 0.12);
+            color: var(--green);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .rank-badge.cd.active {
+            background: rgba(34, 197, 94, 0.25);
+            border-color: var(--green);
+            box-shadow: 0 0 14px rgba(34, 197, 94, 0.3);
+        }
+
+        /* ════════════════ TABLE ════════════════ */
+        .table-wrap {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead {
+            background: rgba(34, 48, 77, 0.5);
+            position: sticky;
+            top: 0;
+        }
+
+        th {
+            padding: 14px 20px;
+            text-align: right;
+            color: var(--muted);
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 14px 20px;
+            border-bottom: 1px solid rgba(34, 48, 77, 0.4);
+            transition: background 0.15s;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr {
+            transition: background 0.15s;
+            cursor: default;
+        }
+
+        tbody tr:hover td {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .rank-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            border: 1px solid transparent;
+        }
+
+        .rank-chip.CA {
+            background: rgba(168, 85, 247, 0.15);
+            color: var(--purple);
+            border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        .rank-chip.CB {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--blue);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .rank-chip.CD {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--green);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .status-check {
+            color: var(--green);
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* ════════════════ RANK CARDS ════════════════ */
+        .rank-cards-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .rank-card-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+
+        .rank-card-item:hover {
+            border-color: var(--rc-color, var(--border));
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .rank-card-item::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--rc-color);
+            border-radius: 0 14px 14px 0;
+        }
+
+        .rc-number {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 900;
+            color: var(--white);
+            flex-shrink: 0;
+        }
+
+        .rc-tag {
+            padding: 5px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 900;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--rc-color);
+            border: 1px solid var(--rc-color);
+            letter-spacing: 1px;
+            flex-shrink: 0;
+        }
+
+        .rc-info {
+            flex: 1;
+        }
+
+        .rc-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 2px;
+        }
+
+        .rc-subtitle {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .rc-check {
+            font-size: 20px;
+            color: var(--green);
+            text-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+            flex-shrink: 0;
+        }
+
+        /* ════════════════ VIOLATIONS PAGE ════════════════ */
+        .violations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 18px;
+        }
+
+        .vio-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 22px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+        }
+
+        .vio-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+
+        .vio-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--red), transparent);
+        }
+
+        .vio-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .vio-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a2740, #0d1a2e);
+            border: 2px solid rgba(239, 68, 68, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .vio-name {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--white);
+        }
+
+        .vio-rank-chip {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .vio-desc {
+            font-size: 13px;
+            color: var(--white);
+            margin-bottom: 14px;
+            padding: 10px 14px;
+            background: rgba(239, 68, 68, 0.07);
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            border-radius: 8px;
+            line-height: 1.6;
+        }
+
+        .vio-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--muted);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .vio-date {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .vio-status {
+            background: rgba(239, 68, 68, 0.12);
+            color: var(--red);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* ════════════════ LAWS PAGE - ACCORDION ════════════════ */
+        .accordion {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .acc-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: border-color var(--transition);
+        }
+
+        .acc-item.open {
+            border-color: var(--gold);
+        }
+
+        .acc-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 18px 22px;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .acc-header:hover {
+            background: rgba(212, 175, 55, 0.04);
+        }
+
+        .acc-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .acc-title {
+            flex: 1;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--white);
+            transition: color var(--transition);
+        }
+
+        .acc-arrow {
+            font-size: 18px;
+            color: var(--muted);
+            transition: transform var(--transition), color var(--transition);
+            flex-shrink: 0;
+        }
+
+        .acc-item.open .acc-arrow {
+            transform: rotate(180deg);
+            color: var(--gold);
+        }
+
+        .acc-item.open .acc-title {
+            color: var(--gold);
+        }
+
+        .acc-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s;
+            padding: 0 22px;
+        }
+
+        .acc-item.open .acc-body {
+            max-height: 600px;
+            padding: 0 22px 20px;
+        }
+
+        .acc-content {
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 2;
+        }
+
+        .acc-content li {
+            margin-bottom: 8px;
+            padding-right: 16px;
+            position: relative;
+            transition: color var(--transition);
+        }
+
+        .acc-content li:hover {
+            color: var(--white);
+        }
+
+        .acc-content li::before {
+            content: '◆';
+            position: absolute;
+            right: 0;
+            color: var(--gold);
+            font-size: 8px;
+            top: 5px;
+        }
+
+        /* ════════════════ UTILITY CLASSES ════════════════ */
+        tr.hidden {
+            display: none;
+        }
+
+        .error {
+            color: var(--red);
+        }
+
+        .success {
+            color: var(--green);
+        }
+
+        .warning {
+            color: var(--gold);
+        }
+
+        /* ════════════════ RESPONSIVE ════════════════ */
+        @media (max-width: 1200px) {
+            .stats-row {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .violations-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 180px;
+            }
+
+            .main {
+                margin-right: 180px;
+            }
+
+            header {
+                padding: 0 16px;
+            }
+
+            .page {
+                padding: 16px;
+            }
+
+            .header-center {
+                position: relative;
+                transform: none;
+                margin: 0 auto;
+                flex: 1;
+            }
+
+            .header-brand {
+                display: none;
+            }
+
+            .header-title {
+                font-size: 14px;
+            }
+
+            .page-title {
+                font-size: 18px;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+
+            .violations-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dash-row2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 140px;
+            }
+
+            .main {
+                margin-right: 140px;
+            }
+
+            .sidebar-logo {
+                padding: 16px 12px 12px;
+            }
+
+            .logo-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+            }
+
+            .logo-text {
+                font-size: 11px;
+            }
+
+            .page {
+                padding: 12px;
+            }
+
+            .filters-row {
+                gap: 8px;
+            }
+
+            .search-box,
+            .select-box {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .rank-badge {
+                padding: 6px 16px;
+                font-size: 12px;
+            }
+
+            .stat-card {
+                padding: 16px 12px;
+            }
+
+            .stat-number {
+                font-size: 28px;
+            }
+
+            .stat-label {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ════════════════ SIDEBAR ════════════════ -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon">🛡️</div>
+        <div class="logo-text">نظام<br>المعتمدين</div>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav">
+        <div class="nav-section-label">القائمة الرئيسية</div>
+        <div class="nav-item active" onclick="goto('dashboard', this)">
+            <span class="nav-icon">📊</span> لوحة التحكم
+        </div>
+        <div class="nav-item" onclick="goto('members', this)">
+            <span class="nav-icon">👥</span> المعتمدون
+        </div>
+        <div class="nav-item" onclick="goto('violations', this)">
+            <span class="nav-icon">⚠️</span> المخالفات
+        </div>
+        <div class="nav-item" onclick="goto('laws', this)">
+            <span class="nav-icon">📜</span> القوانين
+        </div>
+        <div class="nav-section-label" style="margin-top: 16px">الرتب</div>
+        <div class="nav-item" onclick="goto('ranks', this)">
+            <span class="nav-icon">🏆</span> نظام الرتب
+        </div>
+    </nav>
+    <div class="sidebar-footer">v2.1.0 &nbsp;|&nbsp; نظام المعتمدين</div>
+</aside>
+
+<!-- ════════════════ MAIN ════════════════ -->
+<div class="main">
+
+    <!-- ════════════════ HEADER ════════════════ -->
+    <header>
+        <div class="header-left">
+            <div class="header-shield">🏅</div>
+            <div class="header-brand">
+                <strong>المعتمدين</strong>
+                شعار النظام الرسمي
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="header-title">نظام المعتمدين</div>
+        </div>
+        <div class="header-right">
+            <div class="update-badge">
+                <div class="pulse-dot"></div>
+                آخر تحديث: <span id="last-update"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ════════════════ DASHBOARD ════════════════ -->
+    <div class="page active" id="page-dashboard">
+        <div class="page-title">📊 لوحة التحكم</div>
+
+        <!-- Stat Cards Row -->
+        <div class="stats-row">
+            <div class="stat-card" data-type="total">
+                <div class="stat-icon">👥</div>
+                <div class="stat-number" data-target="128">0</div>
+                <div class="stat-label">إجمالي المعتمدين</div>
+                <div class="stat-glow"></div>
+            </div>
+            <div class="stat-card" data-type="ca">
+                <div class="stat-icon">🥇</div>
+                <div class="stat-number" data-target="12">0</div>
+                <div class="stat-label">رتبة CA</div>
+                <div class="stat-glow"></div>
+            </div>
+            <div class="stat-card" data-type="cb">
+                <div class="stat-icon">🥈</div>
+                <div class="stat-number" data-target="54">0</div>
+                <div class="stat-label">رتبة CB</div>
+                <div class="stat-glow"></div>
+            </div>
+            <div class="stat-card" data-type="cd">
+                <div class="stat-icon">🥉</div>
+                <div class="stat-number" data-target="62">0</div>
+                <div class="stat-label">رتبة CD</div>
+                <div class="stat-glow"></div>
+            </div>
+            <div class="stat-card" data-type="vio">
+                <div class="stat-icon">⚠️</div>
+                <div class="stat-number" data-target="4">0</div>
+                <div class="stat-label">المخالفات</div>
+                <div class="stat-glow"></div>
+            </div>
+        </div>
+
+        <!-- Dashboard Row 2 -->
+        <div class="dash-row2">
+            <div class="card">
+                <div class="card-title">📋 آخر التحديثات</div>
+                <ul class="update-list">
+                    <li class="update-item">
+                        <div class="update-dot"></div>
+                        ترقية أحمد إلى CA
+                        <span class="update-time">منذ ساعة</span>
+                    </li>
+                    <li class="update-item">
+                        <div class="update-dot" style="background: var(--green); box-shadow: 0 0 6px var(--green)"></div>
+                        إضافة معتمد جديد
+                        <span class="update-time">منذ 3 ساعات</span>
+                    </li>
+                    <li class="update-item">
+                        <div class="update-dot" style="background: var(--gold); box-shadow: 0 0 6px var(--gold)"></div>
+                        تحديث القوانين
+                        <span class="update-time">أمس</span>
+                    </li>
+                    <li class="update-item">
+                        <div class="update-dot" style="background: var(--red); box-shadow: 0 0 6px var(--red)"></div>
+                        تسجيل مخالفة جديدة
+                        <span class="update-time">أمس</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📊 توزيع الرتب</div>
+                <div class="rank-row">
+                    <span class="rank-label">CA</span>
+                    <div class="rank-bar-bg"><div class="rank-bar-fill ca" data-w="9"></div></div>
+                    <span class="rank-count">12</span>
+                </div>
+                <div class="rank-row">
+                    <span class="rank-label">CB</span>
+                    <div class="rank-bar-bg"><div class="rank-bar-fill cb" data-w="42"></div></div>
+                    <span class="rank-count">54</span>
+                </div>
+                <div class="rank-row">
+                    <span class="rank-label">CD</span>
+                    <div class="rank-bar-bg"><div class="rank-bar-fill cd" data-w="48"></div></div>
+                    <span class="rank-count">62</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════ MEMBERS PAGE ════════════════ -->
+    <div class="page" id="page-members">
+        <div class="page-title">👥 المعتمدون</div>
+
+        <div class="filters-row">
+            <input class="search-box" type="text" placeholder="🔍  بحث بالاسم أو الكود..." id="member-search" oninput="filterMembers()">
+            <select class="select-box" id="member-status" onchange="filterMembers()">
+                <option value="">الكل ▾</option>
+                <option value="نشط">نشط</option>
+                <option value="موقوف">موقوف</option>
+            </select>
+        </div>
+
+        <div class="rank-filters">
+            <div class="rank-badge all active" onclick="filterRank('all', this)">الكل</div>
+            <div class="rank-badge ca" onclick="filterRank('CA', this)">CA</div>
+            <div class="rank-badge cb" onclick="filterRank('CB', this)">CB</div>
+            <div class="rank-badge cd" onclick="filterRank('CD', this)">CD</div>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>الرتبة</th>
+                        <th>الكود</th>
+                        <th>الاسم</th>
+                        <th>الحالة</th>
+                    </tr>
+                </thead>
+                <tbody id="members-tbody">
+                    <tr data-rank="CA" data-name="أحمد">
+                        <td><span class="rank-chip CA">CA</span></td>
+                        <td style="color: var(--muted); font-weight: 700">001</td>
+                        <td style="font-weight: 700">أحمد</td>
+                        <td><span class="status-check">✔</span></td>
+                    </tr>
+                    <tr data-rank="CA" data-name="سعد">
+                        <td><span class="rank-chip CA">CA</span></td>
+                        <td style="color: var(--muted); font-weight: 700">002</td>
+                        <td style="font-weight: 700">سعد</td>
+                        <td><span class="status-check">✔</span></td>
+                    </tr>
+                    <tr data-rank="CB" data-name="خالد">
+                        <td><span class="rank-chip CB">CB</span></td>
+                        <td style="color: var(--muted); font-weight: 700">001</td>
+                        <td style="font-weight: 700">خالد</td>
+                        <td><span class="status-check">✔</span></td>
+                    </tr>
+                    <tr data-rank="CB" data-name="محمد">
+                        <td><span class="rank-chip CB">CB</span></td>
+                        <td style="color: var(--muted); font-weight: 700">002</td>
+                        <td style="font-weight: 700">محمد</td>
+                        <td><span class="status-check">✔</span></td>
+                    </tr>
+                    <tr data-rank="CD" data-name="يوسف">
+                        <td><span class="rank-chip CD">CD</span></td>
+                        <td style="color: var(--muted); font-weight: 700">001</td>
+                        <td style="font-weight: 700">يوسف</td>
+                        <td><span class="status-check">✔</span></td>
+                    </tr>
+                    <tr data-rank="CD" data-name="عمر">
+                        <td><span class="rank-chip CD">CD</span></td>
+                        <td style="color: var(--muted); font-weight: 700">002</td>
+                        <td style="font-weight: 700">عمر</td>
+                        <td><span class="status-check">✔</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ════════════════ VIOLATIONS PAGE ════════════════ -->
+    <div class="page" id="page-violations">
+        <div class="page-title">⚠️ المخالفات</div>
+        <div class="violations-grid">
+
+            <div class="vio-card">
+                <div class="vio-header">
+                    <div class="vio-avatar">👤</div>
+                    <div>
+                        <div class="vio-name">أحمد</div>
+                        <div class="vio-rank-chip">CA — 001</div>
+                    </div>
+                </div>
+                <div class="vio-desc">مخالفة بند رقم 4 — التصرف غير اللائق خلال الجلسة الرسمية</div>
+                <div class="vio-footer">
+                    <div class="vio-date">📅 08/06/2026</div>
+                    <div class="vio-status">قيد المراجعة</div>
+                </div>
+            </div>
+
+            <div class="vio-card">
+                <div class="vio-header">
+                    <div class="vio-avatar">👤</div>
+                    <div>
+                        <div class="vio-name">خالد</div>
+                        <div class="vio-rank-chip">CB — 001</div>
+                    </div>
+                </div>
+                <div class="vio-desc">مخالفة بند رقم 2 — التغيب غير المبرر عن التدريب</div>
+                <div class="vio-footer">
+                    <div class="vio-date">📅 05/06/2026</div>
+                    <div class="vio-status">قيد المراجعة</div>
+                </div>
+            </div>
+
+            <div class="vio-card">
+                <div class="vio-header">
+                    <div class="vio-avatar">👤</div>
+                    <div>
+                        <div class="vio-name">يوسف</div>
+                        <div class="vio-rank-chip">CD — 001</div>
+                    </div>
+                </div>
+                <div class="vio-desc">مخالفة بند رقم 7 — استخدام معدات غير مرخصة</div>
+                <div class="vio-footer">
+                    <div class="vio-date">📅 01/06/2026</div>
+                    <div class="vio-status">قيد المراجعة</div>
+                </div>
+            </div>
+
+            <div class="vio-card">
+                <div class="vio-header">
+                    <div class="vio-avatar">👤</div>
+                    <div>
+                        <div class="vio-name">سعد</div>
+                        <div class="vio-rank-chip">CA — 002</div>
+                    </div>
+                </div>
+                <div class="vio-desc">مخالفة بند رقم 1 — عدم الالتزام بمعايير السلوك العام</div>
+                <div class="vio-footer">
+                    <div class="vio-date">📅 28/05/2026</div>
+                    <div class="vio-status">قيد المراجعة</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ════════════════ LAWS PAGE ════════════════ -->
+    <div class="page" id="page-laws">
+        <div class="page-title">📜 القوانين والأنظمة</div>
+        <div class="accordion">
+
+            <div class="acc-item" onclick="toggleAcc(this)">
+                <div class="acc-header">
+                    <span class="acc-icon">📋</span>
+                    <span class="acc-title">شروط الاعتماد</span>
+                    <span class="acc-arrow">▼</span>
+                </div>
+                <div class="acc-body">
+                    <div class="acc-content">
+                        <ul>
+                            <li>إتمام الاختبار النظري بنجاح بدرجة لا تقل عن 70%</li>
+                            <li>اجتياز التقييم العملي أمام لجنة المعتمدين</li>
+                            <li>استيفاء ساعات التدريب المطلوبة وفق كل رتبة</li>
+                            <li>تقديم توصية من معتمد من رتبة أعلى</li>
+                            <li>الالتزام بمدة الاختبار وعدم التأخر</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="acc-item" onclick="toggleAcc(this)">
+                <div class="acc-header">
+                    <span class="acc-icon">⚠️</span>
+                    <span class="acc-title">المخالفات</span>
+                    <span class="acc-arrow">▼</span>
+                </div>
+                <div class="acc-body">
+                    <div class="acc-content">
+                        <ul>
+                            <li>البند 1: عدم الالتزام بالسلوك العام خلال الفعاليات</li>
+                            <li>البند 2: التغيب غير المبرر عن التدريبات والجلسات</li>
+                            <li>البند 4: التصرف غير اللائق أمام الأعضاء أو العامة</li>
+                            <li>البند 7: استخدام معدات غير مرخصة أو غير معتمدة</li>
+                            <li>البند 9: إفشاء معلومات سرية خاصة بالنظام</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="acc-item" onclick="toggleAcc(this)">
+                <div class="acc-header">
+                    <span class="acc-icon">⚖️</span>
+                    <span class="acc-title">العقوبات</span>
+                    <span class="acc-arrow">▼</span>
+                </div>
+                <div class="acc-body">
+                    <div class="acc-content">
+                        <ul>
+                            <li>الإنذار الأول: تحذير رسمي مسجّل في الملف</li>
+                            <li>الإنذار الثاني: إيقاف مؤقت لمدة أسبوع</li>
+                            <li>الإنذار الثالث: خفض الرتبة درجة واحدة</li>
+                            <li>المخالفات الجسيمة: الإيقاف الكامل وإلغاء الاعتماد</li>
+                            <li>يحق للمعتمد الطعن في القرار خلال 72 ساعة</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="acc-item" onclick="toggleAcc(this)">
+                <div class="acc-header">
+                    <span class="acc-icon">📌</span>
+                    <span class="acc-title">التعليمات العامة</span>
+                    <span class="acc-arrow">▼</span>
+                </div>
+                <div class="acc-body">
+                    <div class="acc-content">
+                        <ul>
+                            <li>الالتزام بالزي الرسمي في جميع الفعاليات المعتمدة</li>
+                            <li>الانضمام إلى قناة الإشعارات الرسمية للنظام</li>
+                            <li>تجديد الاعتماد سنوياً عبر الاختبار المخصص</li>
+                            <li>إبلاغ المشرفين عن أي مخالفة يشهدها المعتمد</li>
+                            <li>عدم تفويض الصلاحيات لأطراف غير معتمدة</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ════════════════ RANKS PAGE ════════════════ -->
+    <div class="page" id="page-ranks">
+        <div class="page-title">🏆 نظام الرتب</div>
+
+        <div class="rank-cards-section">
+
+            <div class="rank-card-item" style="--rc-color: var(--purple)">
+                <div class="rc-number">1</div>
+                <div class="rc-tag">CA</div>
+                <div class="rc-info">
+                    <div class="rc-title">لاعب محترف</div>
+                    <div class="rc-subtitle">المستوى الأعلى • عام</div>
+                </div>
+                <div class="rc-check">✔</div>
+            </div>
+
+            <div class="rank-card-item" style="--rc-color: var(--blue)">
+                <div class="rc-number">1</div>
+                <div class="rc-tag">CB</div>
+                <div class="rc-info">
+                    <div class="rc-title">معتمد متميز</div>
+                    <div class="rc-subtitle">المستوى المتقدم • عام</div>
+                </div>
+                <div class="rc-check">✔</div>
+            </div>
+
+            <div class="rank-card-item" style="--rc-color: var(--green)">
+                <div class="rc-number">1</div>
+                <div class="rc-tag">CD</div>
+                <div class="rc-info">
+                    <div class="rc-title">لاعب معتمد</div>
+                    <div class="rc-subtitle">المستوى الأساسي • عام</div>
+                </div>
+                <div class="rc-check">✔</div>
+            </div>
+
+        </div>
+
+        <!-- Ranks Details Card -->
+        <div class="card">
+            <div class="card-title">📊 تفاصيل الرتب</div>
+            <table style="font-size: 13px">
+                <thead>
+                    <tr>
+                        <th>الرتبة</th>
+                        <th>الاسم</th>
+                        <th>متطلبات الترقية</th>
+                        <th>عدد الأعضاء</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="rank-chip CA">CA</span></td>
+                        <td style="font-weight: 700">لاعب محترف</td>
+                        <td style="color: var(--muted)">500+ ساعة + اختبار متقدم</td>
+                        <td><span style="color: var(--purple); font-weight: 800">12</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-chip CB">CB</span></td>
+                        <td style="font-weight: 700">معتمد متميز</td>
+                        <td style="color: var(--muted)">200+ ساعة + اختبار CB</td>
+                        <td><span style="color: var(--blue); font-weight: 800">54</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank-chip CD">CD</span></td>
+                        <td style="font-weight: 700">لاعب معتمد</td>
+                        <td style="color: var(--muted)">50+ ساعة + اختبار الدخول</td>
+                        <td><span style="color: var(--green); font-weight: 800">62</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div><!-- /main -->
+
+<script>
+    // ════════════════ INITIALIZATION ════════════════
+    const APP = {
+        currentRank: 'all',
+        initialized: false,
+
+        init() {
+            if (this.initialized) return;
+            this.updateDate();
+            this.animateCounters();
+            setTimeout(() => this.animateBars(), 300);
+            this.initialized = true;
+        },
+
+        updateDate() {
+            const now = new Date();
+            const formatted = now.toLocaleDateString('ar-SA', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+            document.getElementById('last-update').textContent = formatted;
+        },
+
+        // ════════════════ NAVIGATION ════════════════
+        goto(pageId, element) {
+            // Remove active state from all pages and nav items
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            // Add active state to selected page and nav item
+            const page = document.getElementById('page-' + pageId);
+            if (!page) return;
+
+            page.classList.add('active');
+            element.classList.add('active');
+
+            // Trigger animations
+            if (pageId === 'dashboard') {
+                this.animateBars();
+            }
+        },
+
+        // ════════════════ ANIMATIONS ════════════════
+        animateCounters() {
+            document.querySelectorAll('.stat-number[data-target]').forEach(el => {
+                const target = parseInt(el.dataset.target);
+                let current = 0;
+                const step = Math.ceil(target / 40);
+                const interval = setInterval(() => {
+                    current = Math.min(current + step, target);
+                    el.textContent = current;
+                    if (current >= target) {
+                        clearInterval(interval);
+                    }
+                }, 30);
+            });
+        },
+
+        animateBars() {
+            document.querySelectorAll('.rank-bar-fill').forEach(bar => {
+                const width = bar.dataset.w;
+                setTimeout(() => {
+                    bar.style.width = width + '%';
+                }, 100);
+            });
+        },
+
+        // ════════════════ MEMBERS FILTERING ════════════════
+        filterRank(rank, element) {
+            this.currentRank = rank;
+            document.querySelectorAll('.rank-badge').forEach(badge => {
+                badge.classList.remove('active');
+            });
+            element.classList.add('active');
+            this.filterMembers();
+        },
+
+        filterMembers() {
+            const searchValue = document.getElementById('member-search').value.trim().toLowerCase();
+            const rows = document.querySelectorAll('#members-tbody tr');
+
+            rows.forEach(row => {
+                const rank = row.dataset.rank;
+                const name = (row.dataset.name || '').toLowerCase();
+
+                const matchRank = this.currentRank === 'all' || rank === this.currentRank;
+                const matchName = name.includes(searchValue);
+
+                row.classList.toggle('hidden', !(matchRank && matchName));
+            });
+        },
+
+        // ════════════════ ACCORDION ════════════════
+        toggleAcc(element) {
+            element.classList.toggle('open');
+        }
+    };
+
+    // Make functions available globally
+    function goto(pageId, el) { APP.goto(pageId, el); }
+    function filterRank(rank, el) { APP.filterRank(rank, el); }
+    function filterMembers() { APP.filterMembers(); }
+    function toggleAcc(el) { APP.toggleAcc(el); }
+
+    // ════════════════ EVENT LISTENERS ════════════════
+    document.addEventListener('DOMContentLoaded', () => APP.init());
+    window.addEventListener('load', () => APP.init());
+</script>
+
+</body>
+</html>
