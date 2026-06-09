@@ -12,12 +12,9 @@
  │
  ├── 📁 js/
  │   ├── app.js                 ← تطبيق الصفحة الرئيسية
- │   ├── admin.js               ← تطبيق الأدمن (مع Firebase)
- │   ├── firebase-config.js     ← Firebase (npm version)
- │   └── firebase-cdn.js        ← Firebase (CDN version) ⭐
+ │   └── admin.js               ← تطبيق الأدمن
  │
  ├── 📋 README.md               ← دليل شامل
- ├── 🔥 FIREBASE.md             ← دليل Firebase
  └── ⚡ QUICKSTART.md           ← هذا الملف
 ```
 
@@ -74,49 +71,10 @@ http://localhost:3000/index.html
 
 ---
 
-## 🔥 Firebase - التكامل
-
-### ✨ الحالة الحالية
-✅ **Firebase مُعد بالفعل!**
-
-#### البيانات:
-```
-projectId: app-panel-f3795
-authDomain: app-panel-f3795.firebaseapp.com
-```
-
-### 🚀 كيف يعمل
-
-#### 1. المصادقة
-```javascript
-// تسجيل دخول
-const result = await FirebaseAuth.login('email@example.com', 'password');
-if (result.success) {
-  console.log('✓ مرحباً:', result.user.email);
-}
-```
-
-#### 2. إدارة البيانات
-```javascript
-// إضافة
-await FirestoreDB.addData('members', { name: 'أحمد' });
-
-// قراءة
-const data = await FirestoreDB.getData('members');
-
-// تحديث
-await FirestoreDB.updateData('members', 'id', { rank: 'CA' });
-
-// حذف
-await FirestoreDB.deleteData('members', 'id');
-```
-
-#### 3. الاستماع الحي
-```javascript
-FirestoreDB.listenToCollection('members', (data) => {
-  console.log('✓ تحديث حي:', data);
-});
-```
+### 🔐 حفظ البيانات محلياً
+- يتم حفظ البيانات في localStorage فقط.
+- لا يوجد تكامل مع أي خدمة سحابية.
+- يمكنك تعديل بيانات النظام وإعادة تحميل الصفحة دون الاعتماد على مزود خارجي.
 
 ---
 

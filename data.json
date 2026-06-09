@@ -1,0 +1,14 @@
+{
+  "systemName": "نظام المعتمدين",
+  "systemVersion": "v2.1.0",
+  "systemDate": "2026-06-09",
+  "stats": {
+    "totalMembers": 128,
+    "caMembers": 12,
+    "cbMembers": 54,
+    "cdMembers": 62,
+    "violationsCount": 4,
+    "pendingViolations": 2,
+    "resolvedViolations": 2
+  }
+}

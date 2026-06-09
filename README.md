@@ -1,6 +1,6 @@
 # 🛡️ نظام المعتمدين - لوحة التحكم
 
-نظام متقدم لإدارة المعتمدين مع لوحة تحكم احترافية وتكامل Firebase.
+نظام متقدم لإدارة المعتمدين مع لوحة تحكم احترافية وبدون خدمة سحابية خارجية.
 
 ## 📁 هيكل المشروع
 
@@ -8,7 +8,6 @@
 APP-PANEL/
 ├── index.html              # الصفحة الرئيسية
 ├── admin.html              # صفحة لوحة الأدمن
-├── FIREBASE.md            # دليل Firebase
 ├── README.md              # هذا الملف
 │
 ├── css/
@@ -16,9 +15,7 @@ APP-PANEL/
 │
 ├── js/
 │   ├── app.js             # تطبيق الصفحة الرئيسية
-│   ├── admin.js           # تطبيق لوحة الأدمن (مع Firebase)
-│   ├── firebase-config.js # إعدادات Firebase (ES6 Modules)
-│   └── firebase-cdn.js    # إعدادات Firebase (CDN Version)
+│   └── admin.js           # تطبيق لوحة الأدمن
 ```
 
 ## ✨ الميزات
@@ -38,11 +35,9 @@ APP-PANEL/
 - ✅ حفظ البيانات (محلي أو Firebase)
 - ✅ واجهة سهلة الاستخدام
 
-### 🔥 Firebase Integration
-- ✅ المصادقة (Authentication)
-- ✅ قاعدة بيانات (Firestore)
-- ✅ تحليلات (Analytics)
-- ✅ خيار محلي بديل
+### � حفظ البيانات
+- ✅ حفظ البيانات محلياً باستخدام localStorage
+- ✅ دعم إدارة النظام بدون خدمات سحابية خارجية
 
 ## 🚀 كيفية الاستخدام
 
@@ -210,9 +205,8 @@ if (result.success) {
 ## 📞 الدعم
 
 للمزيد من المعلومات:
-- 📖 [دليل Firebase](./FIREBASE.md)
-- 🌐 [Firebase Docs](https://firebase.google.com/docs)
-- 💬 [Stack Overflow](https://stackoverflow.com/questions/tagged/firebase)
+- 📖 [README.md](./README.md)
+- 💬 [Stack Overflow](https://stackoverflow.com)
 
 ## 📄 الترخيص
 

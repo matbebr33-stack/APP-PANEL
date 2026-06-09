@@ -166,7 +166,6 @@ if (password === 'admin123') {  // ← غيّر 'admin123'
 | الرئيسية | `index.html` | الصفحة الرئيسية |
 | تسجيل الدخول | `login.html` | دخول الأدمن |
 | لوحة الأدمن | `admin.html` | إدارة النظام |
-| Firebase | `firebase-cdn.js` | قاعدة البيانات |
 
 ---
 
